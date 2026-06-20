@@ -4,6 +4,17 @@ import Lenis from "lenis"
 
 const EOSIN = "#D4436A"
 
+function useMediaQuery(query: string) {
+  const [match, setMatch] = useState(() => window.matchMedia(query).matches)
+  useEffect(() => {
+    const mq = window.matchMedia(query)
+    const handler = (e: MediaQueryListEvent) => setMatch(e.matches)
+    mq.addEventListener("change", handler)
+    return () => mq.removeEventListener("change", handler)
+  }, [query])
+  return match
+}
+
 
 type Mag = 4 | 40 | 400
 const MAG_IMGS: Record<Mag, string> = {
@@ -67,18 +78,16 @@ function MicroscopeView() {
         initial={{ opacity: 0, scale: 0.92 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 1.2, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-        className="microscope-viewport"
-        style={{
-          width: "min(34vw, 580px)",
-          maxWidth: 580,
-          aspectRatio: "1 / 1",
-          borderRadius: "50%",
-          position: "relative",
-          cursor: "none",
-          overflow: "hidden",
-          userSelect: "none",
-          flexShrink: 0,
-        }}
+          className="microscope-viewport"
+          style={{
+            aspectRatio: "1 / 1",
+            borderRadius: "50%",
+            position: "relative",
+            cursor: "none",
+            overflow: "hidden",
+            userSelect: "none",
+            flexShrink: 0,
+          }}
       >
         {/* Barrel shadow */}
         <div style={layer(0, "radial-gradient(circle at 50% 50%, rgba(0,0,0,0.05) 25%, rgba(0,0,0,0.14) 100%)", -12)} />
@@ -278,6 +287,7 @@ const layer = (z: number, bg?: string, inset?: number): React.CSSProperties => (
 const TITLE_LINES = ["Гистология —", "искусство видеть невидимое"]
 
 function App() {
+  const isMobile = useMediaQuery("(max-width: 480px)")
   const isSnapping = useRef(false)
   const lenisRef = useRef<Lenis | null>(null)
   const aboutRef = useRef<HTMLElement>(null)
@@ -379,15 +389,8 @@ function App() {
         position: "relative",
         maxWidth: 1280,
         width: "100%",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        gap: "clamp(2rem, 4vw, 5rem)",
       }}>
-        <div className="hero-text" style={{
-          flex: "1 1 480px",
-          maxWidth: 560,
-        }}>
+        <div className="hero-text">
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
@@ -482,7 +485,6 @@ function App() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 1.2, ease: [0.16, 1, 0.3, 1] }}
-            style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}
           >
             <motion.button
               whileHover={{ scale: 1.02 }}
@@ -510,12 +512,7 @@ function App() {
           </motion.div>
         </div>
 
-        <div className="hero-visual" style={{
-          flex: "1 1 480px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}>
+        <div className="hero-visual">
           <MicroscopeView />
         </div>
       </div>
@@ -523,7 +520,7 @@ function App() {
       {/* Scroll-down button */}
       <div style={{
         position: "absolute",
-        bottom: "clamp(1.5rem, 3vh, 2.5rem)",
+        bottom: "clamp(1rem, 3vh, 2.5rem)",
         left: "50%",
         transform: "translateX(-50%)",
         display: "flex",
@@ -534,8 +531,8 @@ function App() {
         <button
           onClick={scrollToAbout}
           style={{
-            width: 36,
-            height: 36,
+            width: isMobile ? 44 : 36,
+            height: isMobile ? 44 : 36,
             borderRadius: "50%",
             border: "1px solid #D4D0D8",
             background: "#FFFFFF",
@@ -550,7 +547,7 @@ function App() {
           onMouseEnter={(e) => { e.currentTarget.style.opacity = "1"; e.currentTarget.style.borderColor = "#8B3A62" }}
           onMouseLeave={(e) => { e.currentTarget.style.opacity = "0.6"; e.currentTarget.style.borderColor = "#D4D0D8" }}
         >
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style={{ display: "block" }}>
+          <svg width={isMobile ? 18 : 14} height={isMobile ? 18 : 14} viewBox="0 0 14 14" fill="none" style={{ display: "block" }}>
             <path d="M7 1v10M3 7l4 4 4-4" stroke="#5A5568" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </button>
@@ -578,15 +575,7 @@ function App() {
       background: "#FFFFFF",
       padding: "clamp(2rem, 3vw, 3.5rem) clamp(2rem, 4vw, 5rem)",
     }}>
-      <div style={{
-        maxWidth: 820,
-        width: "100%",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        gap: "clamp(0.75rem, 1.2vw, 1.25rem)",
-        overflow: "auto",
-      }}>
+      <div className="section-inner">
         {/* Logos */}
         <div style={{
           display: "flex",
@@ -671,14 +660,7 @@ function App() {
         }} />
 
         {/* Leadership grid */}
-        <div style={{
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr",
-          gap: "clamp(1rem, 2vw, 2rem)",
-          width: "100%",
-          maxWidth: 560,
-          flexShrink: 0,
-        }}>
+        <div className="leadership-grid">
           <div>
             <span style={{
               fontFamily: "'Inter', sans-serif",
@@ -842,8 +824,8 @@ function App() {
           <button
             onClick={scrollToContacts}
             style={{
-              width: 32,
-              height: 32,
+              width: isMobile ? 44 : 32,
+              height: isMobile ? 44 : 32,
               borderRadius: "50%",
               border: "1px solid #D4D0D8",
               background: "#FFFFFF",
@@ -858,7 +840,7 @@ function App() {
             onMouseEnter={(e) => { e.currentTarget.style.opacity = "1"; e.currentTarget.style.borderColor = "#8B3A62" }}
             onMouseLeave={(e) => { e.currentTarget.style.opacity = "0.5"; e.currentTarget.style.borderColor = "#D4D0D8" }}
           >
-            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" style={{ display: "block" }}>
+            <svg width={isMobile ? 16 : 12} height={isMobile ? 16 : 12} viewBox="0 0 12 12" fill="none" style={{ display: "block" }}>
               <path d="M6 1v10M2 7l4 4 4-4" stroke="#5A5568" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </button>
@@ -887,15 +869,7 @@ function App() {
       background: "#FFFFFF",
       padding: "clamp(2rem, 3vw, 3.5rem) clamp(2rem, 4vw, 5rem)",
     }}>
-      <div style={{
-        maxWidth: 800,
-        width: "100%",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        gap: "clamp(0.75rem, 1.2vw, 1.25rem)",
-        overflow: "auto",
-      }}>
+      <div className="section-inner">
         <span style={{
           fontFamily: "'Inter', sans-serif",
           fontSize: "0.6875rem",
@@ -929,13 +903,7 @@ function App() {
         }} />
 
         {/* Links grid */}
-        <div style={{
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr",
-          gap: "0.5rem clamp(1rem, 2vw, 2rem)",
-          width: "100%",
-          maxWidth: 680,
-        }}>
+        <div className="contacts-grid">
           {[
             { name: "СНО Медицинского университета «Реавиз»", href: "https://vk.com/snoreaviz" },
             { name: "РЕАВИЗ СНК Внутренние болезни", href: "https://vk.com/reaviz_samara_snk_vb" },
@@ -989,14 +957,7 @@ function App() {
         }} />
 
         {/* Other resources */}
-        <div style={{
-          display: "flex",
-          flexWrap: "wrap",
-          justifyContent: "center",
-          gap: "0.5rem clamp(1rem, 2vw, 2rem)",
-          maxWidth: 680,
-          width: "100%",
-        }}>
+        <div className="resources-row">
           {[
             { name: "Официальный сайт", href: "https://www.reaviz.ru" },
             { name: "Газета университета", href: "https://totumverum.ru" },
@@ -1056,8 +1017,8 @@ function App() {
           <button
             onClick={scrollToHero}
             style={{
-              width: 32,
-              height: 32,
+              width: isMobile ? 44 : 32,
+              height: isMobile ? 44 : 32,
               borderRadius: "50%",
               border: "1px solid #D4D0D8",
               background: "#FFFFFF",
@@ -1072,7 +1033,7 @@ function App() {
             onMouseEnter={(e) => { e.currentTarget.style.opacity = "1"; e.currentTarget.style.borderColor = "#8B3A62" }}
             onMouseLeave={(e) => { e.currentTarget.style.opacity = "0.5"; e.currentTarget.style.borderColor = "#D4D0D8" }}
           >
-            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" style={{ display: "block" }}>
+            <svg width={isMobile ? 16 : 12} height={isMobile ? 16 : 12} viewBox="0 0 12 12" fill="none" style={{ display: "block" }}>
               <path d="M6 11V1M10 5L6 1 2 5" stroke="#5A5568" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </button>
