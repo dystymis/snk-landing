@@ -388,11 +388,16 @@ function App() {
       background: "#FFFFFF",
       padding: "clamp(1.5rem, 4vw, 3rem) clamp(1rem, 4vw, 3rem)",
     }}>
-      <div className="hero-container" style={{
+      <div style={{
         position: "relative",
         maxWidth: 1280,
         width: "100%",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        gap: "clamp(1rem, 3vh, 2rem)",
       }}>
+        <div className="hero-container">
         <div className="hero-text">
           <motion.div
             initial={{ opacity: 0, y: 16 }}
@@ -520,51 +525,50 @@ function App() {
         </div>
       </div>
 
-      {/* Scroll-down button */}
-      <div style={{
-        position: "absolute",
-        bottom: "clamp(1rem, 3vh, 2.5rem)",
-        left: "50%",
-        transform: "translateX(-50%)",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        gap: "0.35rem",
-      }}>
-        <button
-          onClick={scrollToAbout}
-          style={{
-            width: isMobile ? 44 : 36,
-            height: isMobile ? 44 : 36,
-            borderRadius: "50%",
-            border: "1px solid #D4D0D8",
-            background: "#FFFFFF",
-            cursor: "pointer",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            padding: 0,
-            transition: "opacity 0.2s, border-color 0.2s",
-            opacity: 0.6,
-          }}
-          onMouseEnter={(e) => { e.currentTarget.style.opacity = "1"; e.currentTarget.style.borderColor = "#8B3A62" }}
-          onMouseLeave={(e) => { e.currentTarget.style.opacity = "0.6"; e.currentTarget.style.borderColor = "#D4D0D8" }}
-        >
-          <svg width={isMobile ? 18 : 14} height={isMobile ? 18 : 14} viewBox="0 0 14 14" fill="none" style={{ display: "block" }}>
-            <path d="M7 1v10M3 7l4 4 4-4" stroke="#5A5568" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        </button>
-        <span style={{
-          fontFamily: "'Inter', sans-serif",
-          fontSize: "0.625rem",
-          fontWeight: 500,
-          letterSpacing: "0.08em",
-          textTransform: "uppercase",
-          color: "#8B3A62",
-          opacity: 0.6,
+      {/* Scroll-down button — below hero row */}
+        <div style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: "0.35rem",
+          flexShrink: 0,
+          paddingTop: "clamp(0.75rem, 3vh, 1.5rem)",
         }}>
-          О нас
-        </span>
+          <button
+            onClick={scrollToAbout}
+            style={{
+              width: isMobile ? 44 : 36,
+              height: isMobile ? 44 : 36,
+              borderRadius: "50%",
+              border: "1px solid #D4D0D8",
+              background: "#FFFFFF",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              padding: 0,
+              transition: "opacity 0.2s, border-color 0.2s",
+              opacity: 0.6,
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.opacity = "1"; e.currentTarget.style.borderColor = "#8B3A62" }}
+            onMouseLeave={(e) => { e.currentTarget.style.opacity = "0.6"; e.currentTarget.style.borderColor = "#D4D0D8" }}
+          >
+            <svg width={isMobile ? 18 : 14} height={isMobile ? 18 : 14} viewBox="0 0 14 14" fill="none" style={{ display: "block" }}>
+              <path d="M7 1v10M3 7l4 4 4-4" stroke="#5A5568" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
+          <span style={{
+            fontFamily: "'Inter', sans-serif",
+            fontSize: "0.625rem",
+            fontWeight: 500,
+            letterSpacing: "0.08em",
+            textTransform: "uppercase",
+            color: "#8B3A62",
+            opacity: 0.6,
+          }}>
+            О нас
+          </span>
+        </div>
       </div>
     </section>
 
