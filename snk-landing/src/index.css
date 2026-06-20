@@ -1,0 +1,62 @@
+@font-face {
+  font-family: 'Classico URW Bold';
+  src: url('/fonts/classico-urw-bold.otf') format('opentype');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #FFFFFF;
+  color: #1C1C2E;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+svg {
+  display: block;
+}
+
+button {
+  font-family: inherit;
+}
+
+@media (max-width: 768px) {
+  .hero-container {
+    flex-direction: column !important;
+    text-align: center;
+  }
+
+  .hero-text {
+    max-width: 100% !important;
+  }
+
+  .hero-visual {
+    align-items: center;
+  }
+  .microscope-viewport {
+    max-width: 280px !important;
+    width: 60vw !important;
+  }
+
+  .hero-cta {
+    justify-content: center;
+  }
+
+  .hero-desc {
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
