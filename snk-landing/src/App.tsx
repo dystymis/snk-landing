@@ -290,6 +290,7 @@ function App() {
   const isMobile = useMediaQuery("(max-width: 480px)")
   const isSnapping = useRef(false)
   const lenisRef = useRef<Lenis | null>(null)
+  const heroRef = useRef<HTMLElement>(null)
   const aboutRef = useRef<HTMLElement>(null)
   const contactsRef = useRef<HTMLElement>(null)
 
@@ -327,8 +328,6 @@ function App() {
   }, [])
 
   useEffect(() => {
-    document.body.style.overflow = "hidden"
-
     const lenis = new Lenis({
       duration: 1.8,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
@@ -346,44 +345,48 @@ function App() {
     }
     rafId = requestAnimationFrame(raf)
 
-    const sections = document.querySelectorAll("section")
+    const snap = () => {
+      const secs = document.querySelectorAll("section")
+      if (!secs.length) return
+      const scrollTop = lenis.scroll
+      let closestIdx = 0
+      let closestDist = Infinity
+      secs.forEach((s, i) => {
+        const dist = Math.abs(s.getBoundingClientRect().top)
+        if (dist < closestDist) { closestDist = dist; closestIdx = i }
+      })
+      const snapScroll = secs[closestIdx].offsetTop
+      if (Math.abs(scrollTop - snapScroll) > 10) {
+        isSnapping.current = true
+        lenis.scrollTo(snapScroll, {
+          duration: 1.2,
+          easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+          onComplete: () => { isSnapping.current = false },
+        })
+      }
+    }
 
     lenis.on("scroll", (e: { velocity: number }) => {
-      if (isSnapping.current || !sections.length) return
-      if (Math.abs(e.velocity) < 0.3) {
-        const scrollTop = lenis.scroll
-        const viewH = window.innerHeight
-        const targetIdx = Math.round(scrollTop / viewH)
-        const clamped = Math.max(0, Math.min(targetIdx, sections.length - 1))
-        const snapTo = clamped * viewH
-        if (Math.abs(scrollTop - snapTo) > 5) {
-          isSnapping.current = true
-          lenis.scrollTo(snapTo, {
-            duration: 1.2,
-            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-            onComplete: () => { isSnapping.current = false },
-          })
-        }
-      }
+      if (isSnapping.current) return
+      if (Math.abs(e.velocity) < 0.3) snap()
     })
 
     return () => {
       cancelAnimationFrame(rafId)
       lenis.destroy()
-      document.body.style.overflow = ""
     }
   }, [])
 
   return (
     <>
-    <section style={{
+    <section ref={heroRef} style={{
       position: "relative",
-      height: "100vh",
+      minHeight: "100dvh",
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
       background: "#FFFFFF",
-      padding: "clamp(1.5rem, 4vw, 3rem)",
+      padding: "clamp(1.5rem, 4vw, 3rem) clamp(1rem, 4vw, 3rem)",
     }}>
       <div className="hero-container" style={{
         position: "relative",
@@ -395,7 +398,7 @@ function App() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-            style={{ marginBottom: "1.5rem" }}
+            style={{ marginBottom: isMobile ? "0.75rem" : "1.5rem" }}
           >
             <span style={{
               display: "inline-flex",
@@ -428,7 +431,7 @@ function App() {
             lineHeight: 1.08,
             color: "#1C1C2E",
             letterSpacing: "-0.025em",
-            marginBottom: "1.25rem",
+              marginBottom: isMobile ? "0.5rem" : "1.25rem",
           }}>
             {TITLE_LINES.map((line, i) => (
               <motion.span
@@ -456,7 +459,7 @@ function App() {
               fontSize: "1.125rem",
               fontStyle: "italic",
               color: "#8B3A62",
-              marginBottom: "1.25rem",
+            marginBottom: isMobile ? "0.5rem" : "1.25rem",
             }}
           >
             Медицинский университет «РеаВиЗ»
@@ -471,7 +474,7 @@ function App() {
               fontSize: "1rem",
               lineHeight: 1.75,
               color: "#5A5568",
-              marginBottom: "2rem",
+              marginBottom: isMobile ? "0.75rem" : "2rem",
               maxWidth: 440,
             }}
           >
@@ -567,13 +570,13 @@ function App() {
 
     {/* ─── About section ─── */}
     <section ref={aboutRef} style={{
-      height: "100vh",
+      minHeight: "100dvh",
       display: "flex",
       flexDirection: "column",
       alignItems: "center",
       justifyContent: "center",
       background: "#FFFFFF",
-      padding: "clamp(2rem, 3vw, 3.5rem) clamp(2rem, 4vw, 5rem)",
+      padding: "clamp(2rem, 3vw, 3.5rem) clamp(1rem, 4vw, 5rem)",
     }}>
       <div className="section-inner">
         {/* Logos */}
@@ -861,13 +864,13 @@ function App() {
 
     {/* ─── Contacts section ─── */}
     <section ref={contactsRef} style={{
-      height: "100vh",
+      minHeight: "100dvh",
       display: "flex",
       flexDirection: "column",
       alignItems: "center",
       justifyContent: "center",
       background: "#FFFFFF",
-      padding: "clamp(2rem, 3vw, 3.5rem) clamp(2rem, 4vw, 5rem)",
+      padding: "clamp(2rem, 3vw, 3.5rem) clamp(1rem, 4vw, 5rem)",
     }}>
       <div className="section-inner">
         <span style={{
