@@ -1,6 +1,6 @@
 import * as SliderPrimitive from "@radix-ui/react-slider"
 import * as TooltipPrimitive from "@radix-ui/react-tooltip"
-import { useRef, useState, useEffect, useCallback, type ReactNode } from "react"
+import { useState, useEffect, useCallback, type ReactNode } from "react"
 
 TooltipPrimitive.Provider
 
