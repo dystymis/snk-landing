@@ -956,53 +956,6 @@ function App() {
           ))}
         </div>
 
-        <div style={{
-          width: "clamp(30px, 4vw, 50px)",
-          height: 1,
-          background: "#D4D0D8",
-          flexShrink: 0,
-        }} />
-
-        {/* Other resources */}
-        <div className="resources-row">
-          {[
-            { name: "Официальный сайт", href: "https://www.reaviz.ru" },
-            { name: "Газета университета", href: "https://totumverum.ru" },
-            { name: "Клиники «Реавиз»", href: "https://reaviz.com" },
-          ].map(({ name, href }) => (
-            <a
-              key={href}
-              href={href}
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{
-                fontFamily: "'Inter', sans-serif",
-                fontSize: "0.75rem",
-                fontWeight: 500,
-                color: "#6B6575",
-                textDecoration: "none",
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "0.35rem",
-                padding: "0.25rem 0",
-                borderBottom: "1px solid transparent",
-                transition: "border-color 0.15s, color 0.15s",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.borderBottomColor = "#D4D0D8"
-                e.currentTarget.style.color = "#1C1C2E"
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.borderBottomColor = "transparent"
-                e.currentTarget.style.color = "#6B6575"
-              }}
-            >
-              <span style={{ fontSize: "0.9em", opacity: 0.6 }}>↗</span>
-              {name}
-            </a>
-          ))}
-        </div>
-
         {/* Scroll-up button */}
         <div style={{
           display: "flex",
