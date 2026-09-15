@@ -1,6 +1,7 @@
 import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from "framer-motion"
 import { useRef, useCallback, useState, useEffect } from "react"
 import Lenis from "lenis"
+import SignupModal from "./SignupModal"
 
 const EOSIN = "#D4436A"
 
@@ -288,6 +289,7 @@ const TITLE_LINES = ["Гистология —", "искусство видет�
 
 function App() {
   const isMobile = useMediaQuery("(max-width: 480px)")
+  const [signupOpen, setSignupOpen] = useState(false)
   const isSnapping = useRef(false)
   const lenisRef = useRef<Lenis | null>(null)
   const heroRef = useRef<HTMLElement>(null)
@@ -497,6 +499,7 @@ function App() {
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
+              onClick={() => setSignupOpen(true)}
               style={{
                 fontSize: "0.9375rem",
                 fontWeight: 500,
@@ -1000,6 +1003,7 @@ function App() {
         </div>
       </div>
     </section>
+    <SignupModal open={signupOpen} onClose={() => setSignupOpen(false)} />
     </>
   )
 }
