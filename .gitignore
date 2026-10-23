@@ -31,3 +31,12 @@ opencode.json
 *.png
 *.jpg
 !public/**
+
+# Secrets (deploy)
+.yc-token
+.vk-token
+
+# Build artifacts (Yandex Cloud function bundles) + test snapshots
+yc-build/
+yc-build-debug/
+.playwright-mcp/

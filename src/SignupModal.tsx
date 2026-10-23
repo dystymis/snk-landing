@@ -75,11 +75,99 @@ function Field({
   )
 }
 
+const TOPIC_GROUPS: { label: string; items: string[] }[] = [
+  {
+    label: "I. Общая гистология",
+    items: [
+      "1. История и современные методы гистологических исследований: От световой микроскопии до электронной и конфокальной лазерной микроскопии.",
+      "2. Гистохимия и иммуногистохимия (ИГХ): Как «окрасить» белки и почему это важно для диагностики (на примере онкомаркеров).",
+      "3. Цитология в деталях: Современные представления о строении и функциях органелл. Роль цитоскелета в патологиях.",
+      "4. Жизненный цикл клетки и его нарушения: Апоптоз vs Некроз. Морфологические признаки клеточной смерти.",
+      "5. Эпителиальные ткани: Морфофункциональная характеристика. Барьерная и секреторная функции. Регенерация эпителия.",
+      "6. Кровь как ткань: Гемограмма и лейкоцитарная формула в норме и при патологии. Морфология клеток крови при лейкозах.",
+      "7. Соединительные ткани: Рыхлая и плотная волокнистая соединительная ткань. Роль фибробластов и макрофагов в заживлении ран.",
+      "8. Хрящевая и костная ткани: Гистогенез, рост и ремоделирование кости. Клеточные механизмы остеопороза.",
+      "9. Мышечные ткани: Сравнительная характеристика гладкой, скелетной и сердечной мышц. Механизмы гипертрофии и гиперплазии.",
+      "10. Нервная ткань: Нейроглия и её роль. Регенерация нервных волокон: почему ЦНС не восстанавливается?",
+    ],
+  },
+  {
+    label: "II. Частная гистология",
+    items: [
+      "11. Гистофизиология кожи и её производных: Роль стволовых клеток в обновлении эпидермиса. Морфология ожогов и ран.",
+      "12. Эндокринная система: Гипоталамо-гипофизарная система. Морфологические изменения щитовидной железы при зобе.",
+      "13. Пищеварительная система (передний и средний отделы): Клеточный состав желез желудка и кишечника. Гистологические основы язвенной болезни.",
+      "14. Печень и поджелудочная железа: Морфология гепатоцитов. Гистологические маркеры цирроза и панкреатита.",
+      "15. Дыхательная система: Сурфактантная система легких. Морфология бронхиальной астмы и эмфиземы.",
+      "16. Сердечно-сосудистая система: Микроциркуляторное русло. Морфологические аспекты атеросклероза и инфаркта миокарда.",
+      "17. Органы кроветворения и иммунной защиты: Тимус и лимфатические узлы. Клеточные кооперации в иммунном ответе.",
+      "18. Мочевыделительная система: Гистофизиология нефрона. Морфология острой и хронической почечной недостаточности.",
+      "19. Мужская и женская половые системы: Сперматогенез и оогенез. Гистологические аспекты бесплодия и гормональной контрацепции.",
+      "20. Органы чувств: Морфология сетчатки и органа слуха. Клеточные механизмы восприятия света и звука.",
+    ],
+  },
+]
+
+function SelectField({
+  label,
+  value,
+  onChange,
+  groups,
+}: {
+  label: string
+  value: string
+  onChange: (v: string) => void
+  groups: { label: string; items: string[] }[]
+}) {
+  const [focused, setFocused] = useState(false)
+  const style = { ...inputStyle, ...(focused ? focusStyle : {}) }
+  return (
+    <label style={{ display: "block" }}>
+      <span style={{
+        fontFamily: "'Inter', sans-serif",
+        fontSize: "0.75rem",
+        fontWeight: 500,
+        color: "#6B6575",
+      }}>
+        {label}
+      </span>
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        onFocus={() => setFocused(true)}
+        onBlur={() => setFocused(false)}
+        style={{
+          ...style,
+          cursor: "pointer",
+          appearance: "none",
+          WebkitAppearance: "none",
+          backgroundImage:
+            "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%236B6575' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E\")",
+          backgroundRepeat: "no-repeat",
+          backgroundPosition: "right 0.875rem center",
+          paddingRight: "2.25rem",
+        }}
+      >
+        <option value="">— Выберите тему —</option>
+        {groups.map((g) => (
+          <optgroup key={g.label} label={g.label}>
+            {g.items.map((t) => (
+              <option key={t} value={t}>
+                {t}
+              </option>
+            ))}
+          </optgroup>
+        ))}
+      </select>
+    </label>
+  )
+}
+
 export default function SignupModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const [topic, setTopic] = useState("")
   const [fio, setFio] = useState("")
   const [group, setGroup] = useState("")
-  const [topic, setTopic] = useState("")
-  const [contacts, setContacts] = useState("")
+  const [teacher, setTeacher] = useState("")
   const [status, setStatus] = useState<ModalState>("form")
   const [error, setError] = useState("")
 
@@ -104,10 +192,11 @@ export default function SignupModal({ open, onClose }: { open: boolean; onClose:
     setStatus("sending")
     setError("")
     try {
-      const res = await fetch("/api/register", {
+      const url = import.meta.env.VITE_API_BASE || "/api/register"
+      const res = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ fio, group, topic, contacts }),
+        body: JSON.stringify({ topic, fio, group, teacher }),
       })
       const data = (await res.json().catch(() => null)) as { ok?: boolean; error?: string } | null
       if (!res.ok || !data?.ok) {
@@ -116,10 +205,10 @@ export default function SignupModal({ open, onClose }: { open: boolean; onClose:
         return
       }
       setStatus("success")
+      setTopic("")
       setFio("")
       setGroup("")
-      setTopic("")
-      setContacts("")
+      setTeacher("")
     } catch {
       setError("Сервер недоступен, попробуйте позже")
       setStatus("error")
@@ -248,10 +337,10 @@ export default function SignupModal({ open, onClose }: { open: boolean; onClose:
                 )}
 
                 <form onSubmit={handleSubmit} style={{ display: "grid", gap: "0.875rem" }}>
+                  <SelectField label="Тема" value={topic} onChange={setTopic} groups={TOPIC_GROUPS} />
                   <Field label="ФИО" value={fio} onChange={setFio} placeholder="Иванов Иван Иванович" />
-                  <Field label="Группа" value={group} onChange={setGroup} placeholder="101-м" />
-                  <Field label="Предполагаемая тема работы" value={topic} onChange={setTopic} textarea placeholder="Например: особенности соединительной ткани..." />
-                  <Field label="Контакты студента" value={contacts} onChange={setContacts} placeholder="VK / телефон / почта" />
+                  <Field label="Номер группы" value={group} onChange={setGroup} placeholder="23-102" />
+                  <Field label="Научный руководитель" value={teacher} onChange={setTeacher} placeholder="Например: Темиров Б.А." />
 
                   <motion.button
                     type="submit"

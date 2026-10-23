@@ -6,10 +6,10 @@ const VK_API_VERSION = "5.199"
 const PEER_ID = 0
 
 export type SignupPayload = {
+  topic: string
   fio: string
   group: string
-  topic: string
-  contacts: string
+  teacher: string
 }
 
 export type SendResult = { ok: true } | { ok: false; error: string }
@@ -21,12 +21,12 @@ export function sanitize(value: unknown): string {
 export function validateSignup(body: unknown): SignupPayload | null {
   const b = (body ?? {}) as Partial<SignupPayload>
   const payload: SignupPayload = {
+    topic: sanitize(b.topic),
     fio: sanitize(b.fio),
     group: sanitize(b.group),
-    topic: sanitize(b.topic),
-    contacts: sanitize(b.contacts),
+    teacher: sanitize(b.teacher),
   }
-  if (!payload.fio || !payload.group || !payload.topic || !payload.contacts) return null
+  if (!payload.topic || !payload.fio || !payload.group || !payload.teacher) return null
   return payload
 }
 
@@ -34,10 +34,10 @@ export function formatMessage(data: SignupPayload): string {
   return [
     "📋 Новая заявка в СНК",
     "",
+    `🔬 Тема: ${data.topic}`,
     `👤 ФИО: ${data.fio}`,
     `🎓 Группа: ${data.group}`,
-    `🔬 Предполагаемая тема: ${data.topic}`,
-    `📞 Контакты: ${data.contacts}`,
+    `📚 Научный руководитель: ${data.teacher}`,
   ].join("\n")
 }
 
